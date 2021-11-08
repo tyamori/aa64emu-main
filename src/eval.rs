@@ -71,9 +71,7 @@ pub fn run(ops: &[Op]) -> Context {
             Op::Arith(opcode, reg1, reg2, reg3) => {
                 // ここを実装
                 // 次のような関数を定義して実装せよ
-                // eval_arith(&mut ctx, opcode, reg1, reg2, reg3);
-                // todo!()は削除すること
-                todo!()
+                eval_arith(&mut ctx, opcode, reg1, reg2, reg3);
             }
             Op::Branch(opcode, line) => {
                 if eval_branch(&ctx, opcode) {
@@ -86,12 +84,48 @@ pub fn run(ops: &[Op]) -> Context {
         pc += 1; // 1つ次のアセンブリを実行
     }
 }
+///算術演算命令を実行
+fn eval_arith(ctx: &mut Context, opcode: &ArithOpcode, dst: &Register, reg2: &Register, reg3: &Register){
+
+    let r1 = ctx.get_reg(reg2);
+    let r2 = ctx.get_reg(reg3);
+
+    match opcode {
+        ArithOpcode::Add => {
+            let n = r1 + r2;
+            ctx.set_reg(dst, n);
+        }
+        ArithOpcode::Sub => {
+            let n = r1 - r2;
+            ctx.set_reg(dst, n);
+        }
+        ArithOpcode::Mul => {
+            let n = r1 * r2;
+            ctx.set_reg(dst, n);
+        }
+        ArithOpcode::Div => {
+            let n = r1 / r2;
+            ctx.set_reg(dst, n);
+        }
+    }
+}
+
+
 
 /// 比較命令を実行
 fn eval_cmp(ctx: &mut Context, reg1: &Register, reg2: &Register) {
     // ここを実装
-    // todo!()は削除すること
-    todo!()
+    // 値の検査は大丈夫?
+    let r1 = ctx.get_reg(reg1);
+    let r2 = ctx.get_reg(reg2);
+
+    if r1 == r2 {
+        ctx.cond = Condition::Eq;
+    }else if r1 < r2{
+        ctx.cond = Condition::Lt;
+    }else {
+        ctx.cond = Condition::Gt;
+    }
 }
 
 /// mov命令を実行
